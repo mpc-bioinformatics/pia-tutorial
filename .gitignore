@@ -178,3 +178,10 @@ TSWLatexianTemp*
 
 # KBibTeX
 *~[0-9]*
+
+
+# MS-GF+ database indices
+*.canno
+*.cnlcp
+*.csarr
+*.cseq
