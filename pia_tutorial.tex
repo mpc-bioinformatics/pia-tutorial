@@ -48,7 +48,7 @@
 \title{Tutorial of PIA -- Protein Inference Algorithms}
 \author{Medical Bioinformatics\\
 	Medizinisches Proteom-Center\\
-	Ruhr-Universität Bochum}
+	Ruhr University Bochum}
 
 
 \begin{document}
@@ -98,10 +98,10 @@ analysed sample must be constructed from the knowledge of the contained
 peptides. This step is known as "protein inference" and is the heart of PIA.
 Furthermore, PIA can be used to inspect, analyse, perform quality checks
 on and filter identified peptide spectrum matches (PSMs) and peptides. This can
-be performed either via a web frontend, KNIME nodes or the command line. While
-the latter method is intended for advanced scripting and the command line can
-now also be downloaded as a Docker image, we will mainly discuss the usage of
-KNIME nodes in this tutorial.
+be performed either via KNIME nodes or the command line. While the latter
+method is intended for advanced scripting and the command line tools can now
+also be downloaded as a Docker image, we will mainly discuss the usage of KNIME
+nodes in this tutorial.
 
 
 \subsection{Prerequisites}
@@ -112,13 +112,15 @@ All data and workflows can be downloaded in the tutorial repository at\\
 \begin{itemize}
 	\item Knowledge of mass spectrometry based bottom-up peptide identification
 	\item Basic knowledge of KNIME and constructing workflows with KNIME
+
 	\item It is helpful to know the basics of OpenMS for KNIME, mainly the usage
 	of spectrum identification nodes. For the advanced and quantification chapter,
 	also the basics of quantification should be known. But both are also shortly
-	sketched in this tutorial. (The openMS tutorial can be found at
+	sketched in this tutorial. (The OpenMS tutorial can be found at
 	\url{http://www.openms.de/tutorials/})
-	\item The tutorial was tested using the stable PIA 1.3.5 nodes and the stable
-	OpenMS 2.1.0 nodes with KNIME 3.4.2
+
+	\item The tutorial was tested using the stable PIA 1.3.9 nodes and the stable
+	OpenMS 2.3.0 nodes with KNIME 3.6.1
 \end{itemize}
 
 \subsection{Version}
@@ -130,17 +132,12 @@ This tutorial was created on \today{} at \currenttime{}.
 \section{Installation of PIA KNIME nodes}
 
 If not yet done, you first need to download and install KNIME to your system
-(\url{https://www.knime.com/downloads}). The easiest way to work with PIA inside
-KNIME is to install the "\textbf{KNIME Analytics Platform + all free
-extensions}", which comes with many nice nodes and functions, including the PIA
-nodes.
-
-If you did install KNIME without all free extensions, or upgraded from an older
-version, you can install the nodes from the community contributions repository.
-For this start KNIME and go to \menu{Help > Install New Software...}. Select the
+(\url{https://www.knime.com/downloads}). After installing KNIME, start up the
+analystics platform and install the PIA nodes from the community contributions
+repository. For this, go to \menu{Help > Install New Software...}. Select the
 community contributions repository under the \menu{Work with} drop down menu, it
-should have an address similar to
-\url{http://update.knime.org/community-contributions/trusted/3.4}. The PIA nodes
+should contain an address similar to
+\url{http://update.knime.org/community-contributions/trusted/3.6}. The PIA nodes
 can be found in the \menu{Bioinformatics \& NGS} group or simply by searching
 for them. Select the PIA nodes, click next, accept the license and restart KNIME
 after the installation is finished.
@@ -149,11 +146,7 @@ If all went well, you will see the PIA octopus on the splash screen of KNIME
 (together with all the other icons) and you will find the PIA nodes inside the
 \menu{Community Nodes} in the Node Repository (usually left bottom side of
 screen). This tutorial also needs the OpenMS nodes (also in the community
-contributions' \menu{Bioinformatics \& NGS}, next to PIA nodes) and the
-JavaScript Views nodes (regular KNIME updates repository, in the \menu{KNIME
-Labs Extensions}) to be installed. If you installed "\textbf{KNIME Analytics
-Platform + all free extensions"}" as recommended above, you need only to install
-the JavaScript nodes for the advanced tutorials.
+contributions' \menu{Bioinformatics \& NGS}, next to PIA nodes).
 
 
 \newpage
@@ -165,22 +158,29 @@ First download the workflows and data for the tutorial at
 
 \subsection{First workflow}
 
-First, we will run a minimal workflow identifying spectra in an mzML file with
-the search engine X!Tandem and using PIA for the protein inference and also
-analysis of the identified PSMs and peptides.
-
 Import and open the workflow \filepath{01-PIA\_first\_analysis} from the
-provided workflows into your KNIME workspace. Please select the file
-\filepath{1a-QExHF04026.mzML} as the analysed mzML file (upper
-\knimenode{Input File}) and the provided FASTA file with decoys \\
+provided workflows into your KNIME workspace. First, we will run a minimal
+workflow identifying spectra in an mzML file with the search engine X!Tandem
+and using PIA for the protein inference and also analysis of the identified
+PSMs and peptides. If you don't want to run the identification step, you can
+skip it by pointing the \knimenode{Input File} node in the "skip
+identifictaion" box to the idXML (\filepath{1a-QExHF04026.idXML}) and directly
+go to \ref{pia_compilation}
+
+
+\subsubsection{Spectrum identification}
+
+Please select the file \filepath{1a-QExHF04026.mzML} as the input spectra file
+(upper \knimenode{Input File}) and the provided FASTA file with decoys \\
 (\filepath{uniprot-proteome-mouse-spiked-cRAP-iRT-isos-2017\_03-decoy.fasta})
-as \\ database for spectrum identification. We will use X!Tandem for spectrum
+as the database for spectrum identification. We will use X!Tandem for spectrum
 identification in this workflow. If you like, you can change it to any other
 supported spectrum identification software in KNIME or make the identification
-externally (e.g. with Mascot or Proteome Discoverer. But then, you need to load
-the results directly into the \knimenode{PIA Compiler} node, see below.) The
-basic configuration settings for spectrum identification of the files used in
-the tutorial are:
+externally e.g. with Mascot or Proteome Discoverer. But then, you need to load
+the results directly into the \knimenode{PIA Compiler} node, for example by
+using the \knimenode{Input File} also available to skip the identifications.
+The basic configuration settings for spectrum identification of the files used
+in the tutorial are:
 
 \begin{itemize}
 	\item 10 ppm precursor tolerance
@@ -192,17 +192,25 @@ the tutorial are:
 The \knimenode{PeptideIndexer} is needed to add the protein / accession
 information to the identified peptide spectrum matches (PSMs). For the tutorial
 data, use "DECOY\_" as the decoy string and prefix as decoy position and make
-sure that "Trypsin" is set as enzyme with "none" as specificity. After adjusting
-the \knimenode{Input File} nodes (and maybe checking the other nodes' settings),
-run the workflow until the \knimenode{PIA Compiler}.
+sure that "Trypsin" is set as enzyme with "none" as specificity.
 
-This node takes a list of files. Note, that the ports from OpenMS
-need to be converted into a URI file list. You could alternatively use a
-\knimenode{List Files} node to select the files containing prior performed
-spectrum identifications in any supported format like Mascot Dat, X!Tandem's
-XML files, Proteome Discoverer's MSF files or any mzIdentML file, and use these
-files as input for the compiler. The \knimenode{PIA Compiler} is necessary to
-structure the data before a PIA analysis. It must be performed only once per set
+
+\subsubsection{PIA compilation}
+\label{pia_compilation}
+
+After adjusting the \knimenode{Input File} nodes, if wanted reconnecting the
+the \knimenode{Input File} for skipping the identifications, and maybe checking
+the other nodes' settings, run the workflow until the \knimenode{PIA Compiler}
+by right-clicking on the node and selecting \menu{Execute}.
+
+This node takes a list of files. Note, that the ports from OpenMS (blue squares)
+need to be converted into a URI file list (black triangle, these represent the
+common KNIME table data). You could alternatively use a \knimenode{List Files}
+node to select the files containing prior performed spectrum identifications in
+any supported format like Mascot Dat, X!Tandem's XML files, Proteome
+Discoverer's MSF files or any mzIdentML file, and use these files as input for
+the compiler. The \knimenode{PIA Compiler} is necessary to structure the data
+before a PIA analysis. It must be performed only once per set
 of identification files. The node has as configuration settings only a
 compilation name, which can be chosen freely. The number of files passed to PIA
 is not limited, though processing more files needs more main memory. Each file
@@ -469,7 +477,7 @@ On the top right you will see a directed graph showing the relations between
 accessions of the currently selected protein group and its peptides and PSMs.
 This might look a bit overwhelming at first, but can be helpful, if you know
 how to read it. In the example workflow, take a look at the group "P02675" (it
-has a score of 46.66) and "Q91V41" (score of 12.57). The accessions of the
+has a score of 71.71) and "Q91V41" (score of 20.13). The accessions of the
 selected group are coloured in dark green with a black border. Accessions of
 (not reported) sub-groups are given in light-green without border and accessions
 reported in other groups in light green with black border. Peptides are coloured
@@ -546,21 +554,23 @@ the tables to excel and process them further.
 \subsubsection{The Export File Port}
 
 On this port the created export file can be found. This could be either used
-for storage (e.g. when creating an mzIdentML file) but also as input for
-OpenMS's \knimenode{ProteinQuantifier}, if an idXML file was exported (as shown
-in the advanced tutorial).
+to create an mzIdentML or mzTab file for storage and uploading into e.g. the
+PRIDE repository, but also as input for OpenMS's \knimenode{ProteinQuantifier},
+if an idXML file was exported (as shown in the advanced tutorial).
+Additionally, you could create CSV files for usage in downstream processes or
+manual inspection.
 
 
 \subsection{Tasks}
 
 \begin{itemize}
 	\item Find the protein group "P02675" in the \textbf{PIA Results Analysis}
-	view (it has a score of 46.66). Try to understand, why this protein (group)
+	view (it has a score of 71.71). Try to understand, why this protein (group)
 	was reported, but no group with Q8K0E8 was reported.
 
-	\item Now find find the protein group "Q91V41" (score 12.57). Why
-	was this group and also the group "P62821, Q5SW88, Q9D1G1" (score 5.65)
-	reported?
+	\item Now find find the protein group "Q91V41" (score 20.13). Why
+	was this group and also the group "P62821, Q5SW88, Q9D1G1" (score 6.07)
+	reported, which has shared peptides?
 
 	\item Make a PIA analysis of the same data, but use an additional search
 	engine. For this, you should activate the creation of PSM sets and set the
@@ -612,10 +622,18 @@ the provided data. All information for this can be found in the prior chapter.
 \newpage
 \section{Web Frontend}
 
-The web frontend, which we did not discuss, can be tested at
-\url{https://github.com/BioDocker/containers/tree/master/pia-web-server/1.1.0-SNAPSHOT}.
+The Docker execution is not yet explained here. To install the Docker image,
+you only need the following command:
 
-%% TODO: add docker
+\begin{verbatim}
+	docker pull biocontainers/pia
+\end{verbatim}
+
+Further documentation will follow. For now, take a look at the PIA wiki at
+GitHub for how to use the command line interface.
+
+
+%% TODO: add more docker information
 
 
 \newpage
