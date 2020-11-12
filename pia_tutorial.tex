@@ -119,42 +119,46 @@ All data and workflows can be downloaded in the tutorial repository at\\
 	sketched in this tutorial. (The OpenMS tutorial can be found at
 	\url{http://www.openms.de/tutorials/})
 
-	\item The tutorial was tested using the stable PIA 1.3.11 nodes and the stable
-	OpenMS 2.4.0 nodes with KNIME 4.0.2
+	\item The tutorial was tested using the stable PIA 1.3.13 nodes and the stable
+	OpenMS 2.6.0 nodes with KNIME 4.2.3
 \end{itemize}
 
 \subsection{Version}
 
-This tutorial was created on \today{} at \currenttime{}.
+This tutorial was created/updated on \today{} at \currenttime{}.
 
 
 \newpage
 \section{Installation of PIA KNIME nodes}
 
-If not yet done, you first need to download and install KNIME to your system
+If not yet done, you first need to download and install the KNIME Analytics
+Platform (in the following just KNIME) to your system
 (\url{https://www.knime.com/downloads}). After installing KNIME, start up the
 analystics platform and install the PIA nodes from the community contributions
 repository. For this, go to \menu{Help > Install New Software...}. Select the
-community contributions repository under the \menu{Work with} drop down menu, it
+"KNIME Community Extensions (Trusted)" under the \menu{Work with} drop down menu, it
 should contain an address similar to
-\url{http://update.knime.org/community-contributions/trusted/3.6}. The PIA nodes
+\url{https://update.knime.com/community-contributions/trusted/4.2}. The PIA nodes
 can be found in the \menu{Bioinformatics \& NGS} group or simply by searching
-for them. Select the PIA nodes, click next, accept the license and restart KNIME
-after the installation is finished.
+for them. Select the PIA nodes for installation, click next, accept the license
+and restart KNIME after the installation is finished.
 
 If all went well, you will see the PIA octopus on the splash screen of KNIME
-(together with all the other icons) and you will find the PIA nodes inside the
+(together with mybe some other icons) and you will find the PIA nodes inside the
 \menu{Community Nodes} in the Node Repository (usually left bottom side of
 screen). This tutorial also needs the OpenMS nodes (also in the community
-contributions' \menu{Bioinformatics \& NGS}, next to PIA nodes).
+extensions' \menu{Bioinformatics \& NGS}, next to PIA nodes).
 
 
 \newpage
 \section{Basic PIA analysis in KNIME}
 
-First download the workflows and data for the tutorial at
-\url{https://github.com/julianu/pia-tutorial}.
-
+First download the data required for the tutorial. These can either be found in
+the KNIME hub at
+\url{https://hub.knime.com/julianu/spaces/PIA/latest/}
+or in GitHub at \url{https://github.com/julianu/pia-tutorial/}. The workflows can
+be found and downloaded, respectively directly imported into KNIME at the same
+positions.
 
 \subsection{First workflow}
 
@@ -565,17 +569,17 @@ manual inspection.
 
 \begin{itemize}
 	\item Find the protein group "P02675" in the \textbf{PIA Results Analysis}
-	view (it has a score of 71.44). Try to understand, why this protein (group)
+	view (it has a score of 71.79). Try to understand, why this protein (group)
 	was reported, but no group with Q8K0E8 was reported.
 
-	\item Now find find the protein group "Q91V41" (score 20.02). Why
-	was this group and also the group "P62821, Q5SW88, Q9D1G1" (score 5.73)
+	\item Now find find the protein group "Q91V41" (score 20.16). Why
+	was this group and also the group "P62821, Q5SW88, Q9D1G1" (score 5.83)
 	reported, which has shared peptides?
 
 	\item Make a PIA analysis of the same data, but use an additional search
 	engine. For this, you should activate the creation of PSM sets and set the
 	used inference base score to the Combined FDR Score.\\
-	Hint: The workflow for this is given in the data folder, but try to extend the
+	Hint: The workflow for this is also provided, but try to extend the
 	workflow on your own first. ;)
 \end{itemize}
 
@@ -620,7 +624,7 @@ the provided data. All information for this can be found in the prior chapter.
 
 
 \newpage
-\section{Web Frontend}
+\section{Execution of Docker container}
 
 The Docker execution is not yet explained here. To install the Docker image,
 you only need the following command:
